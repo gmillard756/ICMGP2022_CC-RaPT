@@ -1,7 +1,16 @@
+2022-02-22, a real actual twosday
 # ICMGP2022 Coding Chirality: Using R and Python Together
 **No prior coding experience is necessary**
 
 Welcome to our coding workshop that is part of the International Conference on Mercury as a Global Pollutant!  This workshop will take place virtually over the course of two days: **July 8th, 2022 and July 9th, 2022.**
+
+## Who are we?
+
+Geoffrey Millard began using R in 2013 as part of an effort to pick up new skills in graduate school.  R was a major workhorse of his master's and PhD work examining mercury in fish and freshwater aquatic ecosystems.  R continues to be important skill he uses data compilation, visualization, statistics, and reproducable research.  Geoffrey began using Python in 2019 when Caitlin showed him a cool beta version of RStudio that combined both languages into a single workflow.
+
+Caitlin Eger began using R in ?2012? and built her own Advanced Study Certificate program as part of her graduate coursework. Caitlin began experimenting with Python in 2018 and now uses both R and Python in her professional life as a data scientist!
+
+## What are you going to learn?
 
 We are still in the process of finalizing our workshop materials, however, everything will eventually be available from this Github repository.  This workshop aims to help the ICMGP community become more comfortable using R and Python together in the same workflow. You will see hands-on coding demonstrations using real biogeochemical data and gain experience using two popular open-source programming software languages, R and Python.  We will be using these languages together in the same workflow/coding environment, RStudio. This workshop will focus on giving researchers tools to start doing data management, visualization, and analysis, using short modules on:
 
