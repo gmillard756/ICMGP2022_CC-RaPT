@@ -6,9 +6,9 @@ Welcome to our coding workshop that is part of the International Conference on M
 
 ## Who are we?
 
-Caitlin Eger was introduced to R as an undergraduate at Juniata College, and a decade later she focused on data science as part of her graduate coursework in Civil and Environmental Engineering at Syracuse University. She began experimenting with Python in 2018 and now uses both R and Python regularly in her professional life as a data scientist.
+**Caitlin Eger** was introduced to R as an undergraduate at Juniata College, and a decade later she focused on data science as part of her graduate coursework in Civil and Environmental Engineering at Syracuse University. She began experimenting with Python in 2018 and now uses both R and Python regularly in her professional life as a data scientist.
 
-Geoffrey Millard began using R in 2013 as part of an effort to pick up new skills in graduate school at Syracuse University.  R was a major workhorse of his master's and PhD work examining mercury in fish and freshwater aquatic ecosystems.  R continues to be important skill he uses data compilation, visualization, statistics, and reproducable research.  Geoffrey began using Python in 2019 when Caitlin showed him a cool [beta](https://www.rstudio.com/products/rstudio/download/preview/) version of RStudio that combined both languages into a single workflow.
+**Geoffrey Millard** began using R in 2013 as part of an effort to pick up new skills in graduate school at Syracuse University.  R was a major workhorse of his master's and PhD work examining mercury in fish and freshwater aquatic ecosystems.  R continues to be important skill he uses data compilation, visualization, statistics, and reproducable research.  Geoffrey began using Python in 2019 when Caitlin showed him a cool [beta](https://www.rstudio.com/products/rstudio/download/preview/) version of RStudio that combined both languages into a single workflow.
 
 ## What are you going to learn?
 
