@@ -29,6 +29,8 @@ Make sure you download and install:
 
 **Yes, you will need all of these on your computer** 
 
+If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard756/ICMGP2022_URaPT/tree/main/Excercises) on your computer, your computer is ready!
+
 It is recommended all attendees complete the pre-workshop activities (*coming June 31st, 2022*). Attendees are encouraged to ask questions during the session.
 
 This Repository is for files used in the Coding Chirality workshop as part of the International Conference on Mercury as a Global Pollutant
