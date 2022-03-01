@@ -1,0 +1,40 @@
+---
+title: "Does_my_setup_work"
+author: "Geoffrey Millard"
+date: "3/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Try running the below code chunks by hitting the play button on the right of each chunk.
+
+```{r cars}
+summary(cars)
+data1 <- cars
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{python}
+import matplotlib.pyplot as plt  # you may be asked to install/update R packages 'png' and 'reticulate' when you do this for the first time.
+import pandas as pd
+from IPython.display import display
+display(r.data1)
+```
+
+If you can see a printout in your Console window of speed and dist data, you have R, RStudio and Python installed on your computer.
