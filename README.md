@@ -2,7 +2,7 @@
 # ICMGP2022 Coding Chirality: Using R and Python Together
 **No prior coding experience is necessary**
 
-Welcome to our coding workshop that is part of the International Conference on Mercury as a Global Pollutant!  This workshop will take place virtually over the course of two days: **July 8th, 2022 and July 9th, 2022.**
+Welcome to our coding workshop that is part of the International Conference on Mercury as a Global Pollutant!  This workshop will take place virtually on **July 19th, 2022.**
 
 ## Who are we?
 
