@@ -29,7 +29,7 @@ Make sure you download and install:
 
 **Yes, you will need all of these on your computer** 
 
-If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard756/ICMGP2022_CC-URaPT/tree/main/Excercises) on your computer, your computer is ready!
+If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises) on your computer, your computer is ready!
 
 It is recommended all attendees complete the pre-workshop activities (*coming June 31st, 2022*). Attendees are encouraged to ask questions during the session.
 
