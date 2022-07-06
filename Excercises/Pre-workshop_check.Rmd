@@ -37,4 +37,4 @@ from IPython.display import display
 display(r.data1)
 ```
 
-If you can see a printout in your Console window of speed and dist data, you have R, RStudio and Python installed on your computer.
+If you can see a printout in your Console window (bottom left in default RStudio layout) of speed and dist data, you have R, RStudio and Python installed on your computer.
