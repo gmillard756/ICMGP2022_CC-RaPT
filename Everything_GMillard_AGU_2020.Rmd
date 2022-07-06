@@ -1,0 +1,346 @@
+---
+title: "Everything GMillard AGU2020"
+author: "Geoffrey Millard"
+date: "November 4, 2020"
+output: html_document
+---
+## Importing data
+### setup Rmarkdown
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+library(kableExtra)
+pltr <- import('matplotlib')
+pltr$use("Agg", force = TRUE)
+py_discover_config()
+use_python('C:/Users/gmill/AppData/Local/r-miniconda/envs/r-reticulate/python.exe')
+# virtualenv_install(envname = 'AGU2020', packages = c('matplotlib', 'dataretrieval', 'SciPy'))
+# virtualenv_python()
+# virtualenv_list()
+# use_virtualenv('AGU2020')
+
+# conda_list()
+# conda_python()
+# 
+# miniconda_path()
+
+# conda_install(envname = 'AGU2020', packages = 'git')
+# conda_install(envname = 'AGU2020', packages = 'pip')
+# conda_install(envname = 'AGU2020', packages = 'dataretrieval', url = 'git+git://github.com/USGS-python/dataretrieval.git')
+use_condaenv(condaenv = 'AGU2020')
+
+
+# conda_install(envname = 'AGU2020', packages = c('SciPy', 'NumPy', 'matplotlib', 'dataretrieval', 'IPython', 'rpy2'))
+
+```
+
+### R
+
+```{r set up workspace, warning=F, message=FALSE}
+library(tidyverse)
+
+#USGS and EPA dataset retrieval package
+library(dataRetrieval) 
+#click on "Packages" tab to see functions available in the dataRetrival package
+
+#these are the USGS sites upstream from Honnedaga Lake, NY that we found in the browser
+sites <- c('0134277112', '0134277114')
+
+#detailed location information about the site
+# readNWISsite(c('0134277112', '0134277114'))
+
+#whatNWISdata displays the datasets available at each site
+available <- whatNWISdata(siteNumber=c('0134277112', '0134277114'))
+actual <- readNWISpCode(parameterCd = available$parm_cd) #interpret parameter codes
+want <- c('00681', '00945', '50287', '50285') #we want: DOC, DSO4, DHg and DMeHg, 0060 is discharge
+data <- readNWISqw(siteNumbers = sites, parameterCd=want) #get the data
+Q <- readNWISdv(siteNumbers = sites, parameterCd='00060')
+codes <- readNWISpCode(parameterCd = unique(data$parm_cd)) #confirms that we got what we wanted, shows UNITS!
+
+# view(data)
+head(data)
+
+```
+
+
+
+### Python
+In Terminal
+$ pip install dataretrieval
+
+
+```{python, python NWIS import}
+import matplotlib.pyplot as plt
+import pandas as pd
+import dataretrieval.nwis as nwis
+
+# get data from NWIS
+site = '0134277112', '0134277114'
+
+df12 = nwis.get_record( sites=site[0],  start='2011-05-16', end='2019-10-08', service='qwdata')
+
+df14 = nwis.get_record( sites=site[1], start='2011-05-16', end='2019-10-08', service='dv')
+
+df12b = nwis.get_qwdata(datetime_index = 'TRUE', site_no=site[0])
+
+```
+
+## Visualize
+### R
+
+```{r visualize, warning=F, message=FALSE}
+data[data$parm_cd=='00681',] %>% 
+  ggplot(aes(x=sample_dt, y=result_va))+
+  geom_point()+
+  labs(x='Date', y='DOC')+
+  theme_bw()
+
+Q %>% ggplot(aes(x=Date, y=X_00060_00003, color=site_no))+
+  geom_line()+
+  labs(x='Date', y='Q (CFS)', color='Site')+
+  theme_bw()
+
+plot(x=Q$Date[Q$site_no==Q$site_no[1]], y=Q$X_00060_00003[Q$site_no==Q$site_no[1]], xlab = 'Date', ylab='Q (CFS)', type = 'l', col='red')
+lines(x=Q$Date[Q$site_no==Q$site_no[2]], y=Q$X_00060_00003[Q$site_no==Q$site_no[2]], xlab = 'Date', ylab='Q (CFS)', type = 'l', col=1)
+
+data$sample_dt <- lubridate::as_date(data$sample_dt)
+  
+```
+
+
+```{python, python visualize NWIS import}
+# plot discharge data
+
+df14['00060_Mean'].plot(figsize=(12,7))
+plt.ylabel('{} ({})'.format('Discharge','CFS'))
+plt.xlabel('Date')
+plt.title('Discharge Observation at USGS Gage 0134277114')
+plt.show()
+```
+
+### Example with reticulate (python imported to R)
+
+```{r}
+NWIS <- reticulate::import('dataretrieval.nwis')
+df12 <- NWIS$get_qwdata(datetime_index = T, site_no=py$site[1], parameterCd=want)
+df12qw <- NWIS$get_record(sites = py$site[1], service = 'qwdata')
+```
+
+
+```{r look at python import}
+# view(py$df14)
+tail(py$df14)
+head(actual)
+```
+
+## Summarizing and visualizing
+### Python
+
+We have this data imported from NWIS, but there is too much for us to look at all at once.
+
+
+```{python, results='asis'}
+bysite=r.data.groupby(['site_no', 'parm_cd'])
+summ=bysite['result_va'].describe()
+summ
+# summ.to_csv('pysumm.csv', index=False) export to csv doesn't work
+summ.to_html()
+
+summ.to_markdown() # need to pip/conda install tabulate package to use
+```
+
+In Jupityr notebook, this looks really good, but not if we are using R.  It also isn't very helpful for getting into R, because the index values get dropped.  One more line of of code will convert the index variables into column data.
+
+```{python, results='asis'}
+summ2=summ.reset_index(['site_no', 'parm_cd'])  
+
+#pick which indices to reset, or do them all by leaving it blank
+```
+
+if we want to group by date, we need to convert 'Date' class in R to a character class.
+
+```{r}
+data$Date <- as.character(data$sample_dt)
+```
+
+then we can convert the character to a date in python
+
+```{python}
+import numpy as np
+
+data=r.data.set_index(pd.to_datetime(r.data.Date))
+
+
+summ3=data.groupby(['site_no', 'parm_cd', pd.Grouper(freq="Y")])
+summ4=summ3['result_va'].describe()
+summ4=summ4.reset_index()                      
+summ5=summ3['result_va'].agg([np.mean, np.std, max, min, len])
+summ5
+summ6=summ5.reset_index()
+```
+
+The best way to visualize output is with the R-DT package
+
+```{r}
+library(DT)
+
+DT::datatable(py$summ)
+DT::datatable(py$summ2)
+# DT::datatable(py$summ4)
+# DT::datatable(py$summ6)
+```
+
+```{python}
+
+from IPython.display import display
+
+import rpy2.rinterface as rinterface
+rinterface.initr()
+
+from rpy2.robjects import pandas2ri
+pandas2ri.activate()
+
+import rpy2.robjects as robjects
+
+r = robjects.r
+pydisplaydf = r.source('pydisplaydf.r')[0]
+
+display(pydisplaydf(summ))
+
+```
+
+###R 
+
+There is no py-describe() equivalent, however the functionality of selecting what you want summarized does exist within r-tidyverse::dplyr
+
+```{r}
+rsum <- data %>% group_by(site_no, parm_cd) %>% summarize(mean=mean(result_va, na.rm=T), std=sd(result_va, na.rm=T), max=max(result_va, na.rm=T), min=min(result_va, na.rm=T), n=n())
+
+
+rsum %>% kable %>% kable_styling(bootstrap_options = c('striped', 'hover', 'responsive'))
+```
+
+we can also use the Kable approach with our py-summary tables for more flexibility.
+
+```{r}
+py$summ2 %>% kable %>% kable_styling(bootstrap_options = c('striped', 'hover', 'responsive'))
+```
+
+we can do this with a python data frame as well, we just need to make sure any index is stored in a column 
+
+```{python}
+df12b=df12.reset_index()
+```
+
+
+And we can summarize differently because of the difference in shape, or we could reshape.
+
+```{r}
+lubridate::month(py$df12b$datetime)
+
+rsum <- py$df12b %>% 
+  group_by(lubridate::month(datetime)) %>% 
+  summarise(across(starts_with('p'), ~mean(.x, na.rm=T)))
+rsum 
+
+rsum <- py$df12b %>% 
+  group_by(lubridate::year(datetime),lubridate::month(datetime)) %>% 
+  select(p00681, p00945, p50287, p50285) %>% 
+  summarise(across(everything(), list(mean=~mean(.x, na.rm=T), std=~sd(.x, na.rm=T), n=~n()), .names = "{.col}.{.fn}"))
+rsum
+
+
+rsum %>% kable %>% kable_styling(bootstrap_options = c('striped', 'hover', 'responsive'))
+```
+
+reshaping can be done in both python (pd.wide_to_long, or df.unstack) and R (dplyr::gather, dplyr::spread).  Using tidyverse packages, long format is very useful for generating compound figures.  The statistics I'm showing are part of the basic R download and are simpler using a wide format.
+
+## Statistics
+### R
+
+Lets start by throwing in some treatment periods to this dataset.
+
+```{r}
+data$Treatment[ data$sample_dt < as.Date('2013-10-1')  ] <- 1
+data$Treatment[ data$sample_dt >= as.Date('2013-10-1') ] <- 2
+data$Treatment[ data$sample_dt > as.Date('2014-02-28') ] <- 3
+
+interest <- c('DOC', 'SO4', 'THg', 'MeHg')
+```
+
+We can simplify the column names and change the analyte parameter codes to something more readable.
+
+```{r}
+simple <- data %>% select(Site=site_no, Date = sample_dt, Time = sample_tm, Analyte=parm_cd, Result = result_va, Treatment)
+
+simple$Analyte <- factor(simple$Analyte, levels = want, labels = interest)
+simple$Treatment <- factor(simple$Treatment, levels = c(1, 2, 3))
+simple$Site <- factor(simple$Site, labels = c('T', 'R'))
+
+wide <- simple %>% spread(key = Analyte, value = Result)
+head(wide)
+```
+
+we can generate correlations and linear regressions
+
+```{r, warning=F}
+cor(x= wide$DOC, y= wide$THg)
+cor(x= wide$DOC, y= wide$THg, use = 'complete.obs') # default method is a Pearson correlation
+THg_DOC_cor <- cor(x= wide$DOC, y= wide$THg, use = 'complete.obs', method = 'spearman')
+THg_DOC_cor
+
+reg1 <- lm(data = wide, THg~DOC)
+reg1
+reg1$residuals
+
+reg2 <- glm(data = wide, THg~DOC, family = 'poisson')
+reg2 <- glm(data = wide, THg~DOC)
+summary(reg2)
+
+
+summary(reg1)
+plot(wide$DOC, wide$THg) 
+
+# independant variables need to be factors!
+
+anova1 <- aov(data=wide, DOC~Site+Treatment+Site*Treatment)
+summary(anova1)
+TukeyHSD(anova1)
+
+```
+
+### Python
+correlations in python
+
+```{python}
+from scipy.stats import pearsonr
+from scipy.stats import spearmanr
+
+pywide=r.wide
+s_pywide=pywide.dropna()
+s_pywide.reset_index()
+pearsonr(s_pywide.THg, s_pywide.DOC)
+
+spearmanr(r.wide.THg, r.wide.DOC, nan_policy='omit')
+
+```
+
+linear regressions in python
+
+```{python}
+import scipy.stats
+import scipy
+scipy.version.version
+
+scipy.stats.linregress(s_pywide.THg, y=s_pywide.DOC)
+scipy.stats.linregress(s_pywide.SO4, s_pywide.DOC)
+
+s_pywide.plot.scatter('DOC', 'THg')
+plt.ylabel('Total Mercury')
+plt.show
+
+scipy.stats.f_oneway(s_pywide.THg, s_pywide.Treatment)
+```
+
+
