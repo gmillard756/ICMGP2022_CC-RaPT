@@ -29,9 +29,9 @@ Make sure you download and install:
 - [RStudio desktop](https://www.rstudio.com/products/rstudio/download/) 
 - and Python [directions](https://support.rstudio.com/hc/en-us/articles/1500007929061-Using-Python-with-the-RStudio-IDE)
 
-**Yes, you will need all of these on your computer** 
+**Yes, you will need all of these on your computer.** 
 
-If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises) on your computer, your computer is ready!
+If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises) **in RStudio**, your computer is ready!
 
 It is recommended all attendees complete the pre-workshop activities (*Update coming July 14th, 2022*). Attendees are encouraged to ask questions during the session.
 
