@@ -33,7 +33,7 @@ Make sure you download and install:
 
 If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises) **in RStudio**, your computer is ready!
 
-It is recommended all attendees complete the pre-workshop activities (*For people with little/no coding experience, there is now an R based pre-workshop coding exercise (30 min) to get familiar with basic principles*). Attendees are encouraged to ask questions during the session.
+It is recommended all attendees complete the pre-workshop activities (*For people with little/no coding experience, there is now an R based [pre-workshop coding exercise](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Intro_to_coding_with_R.html) (30 min) to get familiar with basic principles*). Attendees are encouraged to ask questions during the session.
 
 This Repository is for files used in the Coding Chirality workshop as part of the International Conference on Mercury as a Global Pollutant
 
