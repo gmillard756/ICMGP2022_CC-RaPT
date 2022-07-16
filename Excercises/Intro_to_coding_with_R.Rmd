@@ -46,7 +46,7 @@ You may also want to "soft wrap" your code so that your script doesn't type off 
 knitr::include_graphics("C:/Users/gmillard/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Projects/Workshops/ICMGP2022_URaPT/guide_images/softwrap_dialogue.png")
 ```
 
-The final thing we want to do before jumping into some code is to set the working directory.  The simplest way to do this is in the toolbar clicking *Session -> Set Working Directory -> Set Directory,* or by using the keyboard shortcut ctrl+shift+H and navigating to your desired directory (eg. C:/Users/gmill/Dropbox/Conference workshops/ICMGP2019/). Should then see in the console the command `r kableExtra::text_spec( setwd('C:/Users/gmillard/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Projects/Workshops/ICMGP2022_URaPT/'), color='blue')`, which you can copy and paste into your script.
+The final thing we want to do before jumping into some code is to set the working directory.  The simplest way to do this is in the toolbar clicking *Session -> Set Working Directory -> Set Directory,* or by using the keyboard shortcut ctrl+shift+H and navigating to your desired directory (eg. C:/Users/gmillard/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Projects/Workshops/ICMGP2022_URaPT). Should then see in the console the command `r kableExtra::text_spec( setwd('C:/Users/gmillard/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Projects/Workshops/ICMGP2022_URaPT/'), color='blue')`, which you can copy and paste into your script.
 
 ## Lets Get Started!
 
@@ -153,4 +153,4 @@ Notice, we can use the assigned names for each object on the list, and the numer
 
 The final thing we need to do in preparation for the workshop, is download the datafolder we have made available for you on GitHub.  You can find it by navigating to github.com and searching for 'ICMGP2022_Coding_Chirality.'
 
-This should present you with a single hit for the repository 'gmillard/ICMGP_Coding_Chirality.'  You can now click on the "clone or download" button, and download a .zip file.  Make sure you save this into an accessible directory and not just your downloads folder!  See you soon!
+This should present you with a single hit for the repository 'gmillard/ICMGP2022_Coding_Chirality.'  You can now click on the "clone or download" button, and download a .zip file.  Make sure you save this into an accessible directory and not just your downloads folder!  See you soon!
