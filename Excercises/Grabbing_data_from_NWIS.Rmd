@@ -1,0 +1,100 @@
+---
+title: "Untitled"
+author: "Geoffrey Millard"
+date: "7/15/2022"
+output: html_document
+---
+
+## Importing data
+### setup Rmarkdown
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+library(kableExtra)
+library(tidyverse)
+library(dataRetrieval)
+```
+
+### R
+
+```{r set up workspace, warning=F, message=FALSE}
+# install.packages("dataRetrieval")
+# library(tidyverse)
+
+#USGS and EPA dataset retrieval package
+# library(dataRetrieval) 
+#click on "Packages" tab to see functions available in the dataRetrival package
+
+#these are the USGS sites upstream from Honnedaga Lake, NY that we found in the browser
+sites <- c('0134277112', '0134277114')
+
+#detailed location information about the site
+# readNWISsite(c('0134277112', '0134277114'))
+
+#whatNWISdata displays the datasets available at each site
+# available <- whatNWISdata(siteNumber=c('0134277112', '0134277114')) # This function no longer works for water quality data
+# actual <- readNWISpCode(parameterCd = available$parm_cd) #interpret parameter codes
+want <- c('00681', '00945', '50287', '50285') #we want: DOC, DSO4, DHg and DMeHg, 0060 is discharge
+# data <- readNWISqw(siteNumbers = sites, parameterCd=want) # get the data.  This function is depricated for water quality data.
+Q <- readNWISdv(siteNumbers = sites, parameterCd='00060')
+# codes <- readNWISpCode(parameterCd = unique(data$parm_cd)) #confirms that we got what we wanted, shows UNITS!
+
+data <- readWQPqw(paste0('USGS-', sites), want)
+
+whatWQPdata(siteNumber = paste0('USGS-', sites)) # seems to return GIS information
+?whatWQPdata
+
+
+# view(data)
+head(data)
+
+```
+
+
+
+### Python
+In Terminal
+$ pip install dataretrieval
+
+
+```{python, python NWIS import}
+import matplotlib.pyplot as plt
+import pandas as pd
+import dataretrieval.nwis as nwis
+
+# get data from NWIS
+site = '0134277112', '0134277114'
+```
+
+I have not had great luck reading in data from multiple sites in a single step with this method, but it does pull in all the available parameters for a given site in wide format.
+
+```{python, python NWIS import2}
+df12 = nwis.get_record( sites=site[0],  start='2011-05-16', end='2019-10-08', service='qwdata')
+
+df14 = nwis.get_record( sites=r.sites[1], start='2011-05-16', end='2019-10-08', service='dv')
+
+df12b = nwis.get_qwdata(datetime_index = 'TRUE', site_no=r.sites[0])
+```
+
+
+
+### Exercise
+
+Use either Python or R to grab two physical characteristics:  $Temperature, water$ and $UV 254 -- SDWA NPDWR$
+
+```{r, include=F}
+# actual[actual$srsname %in% c('Temperature, water', 'UV 254 -- SDWA NPDWR'),]
+cd <- c('00010', '50624')
+
+```
+
+```{python, include=F}
+trial12 = nwis.get_record(sites=site[0], start='2011-05-16', end='2019-10-08', service='qwdata', parameterCd = r.cd)
+trial14 = nwis.get_record(sites=site[1], start='2011-05-16', end='2019-10-08', service='qwdata', parameterCd = r.cd)
+```
+
+```{r, include=F}
+trial <- readWQPqw(siteNumbers = paste0('USGS-', sites), parameterCd=cd)
+```
+
