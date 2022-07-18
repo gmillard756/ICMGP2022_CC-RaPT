@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
 ```
 
 ## R Markdown
@@ -38,3 +39,14 @@ display(r.data1)
 ```
 
 If you can see a printout in your Console window (bottom left in default RStudio layout) of speed and dist data, you have R, RStudio and Python installed on your computer.
+
+Setup errors: There are several types of errors you may receive before your installation setup works properly, here are some of the most common ones:
+
+`Error in library(reticulate) : there is no package called ‘reticulate’`
+This type of error appears if you do not have the `reticulate` package loaded in your R package library. Run `install.packages('reticulate')` to download and install the reticulate package.
+
+`Error: unexpected symbol in "import matplotlib.pyplot"`
+This type of error appears if you try to run python code in an R console. First you must run the call `library(reticulate)` to load the reticulate package and bind a python version to your R session.
+
+`Error: ModuleNotFoundError: No module named 'IPython'`
+This type of error appears if a python module is not loaded in your environment. A python module is the equivalent of an R package, it is an auxilliary folder, external to the base R or python distirbution, with extra resources, such as scripts containing special functions, or specialized datasets. In order to download a python module, switch to the `Terminal` tab in RStudio, and run `$ pip install IPython` in the shell. 
