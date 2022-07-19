@@ -51,8 +51,6 @@ head(data)
 
 ```
 
-
-
 ### Python
 In Terminal
 $ pip install dataretrieval
@@ -78,15 +76,12 @@ df12b = nwis.get_qwdata(datetime_index = 'TRUE', site_no=r.sites[0])
 ```
 
 
-
 ### Exercise
-
 Use either Python or R to grab two physical characteristics:  $Temperature, water$ and $UV 254 -- SDWA NPDWR$
 
 ```{r, include=F}
 # actual[actual$srsname %in% c('Temperature, water', 'UV 254 -- SDWA NPDWR'),]
 cd <- c('00010', '50624')
-
 ```
 
 ```{python, include=F}
