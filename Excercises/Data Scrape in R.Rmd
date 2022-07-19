@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE, results = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = here::here())
 ```
 
 ## Loading and Managing data
@@ -15,7 +16,6 @@ Please download data folder from github at: https://github.com/gmillard756/ICMGP
 ### The working directory
 
 ##### Where is your working directory?
-
 This is the address or path that represents the location where R is currently working. You can only have one working directory active at a time
 ```{r, results= FALSE}
 getwd()
@@ -35,9 +35,8 @@ Many, many errors that occur happen because a function is trying to access an ob
 To set the working directory in the RStudio IDE, navigate to the "Files" tab >> click on the three dots >> navigate to your data folder >> click "Open"
 To encode the working directory: (copy the line and paste to top of your .R script file)
 ```{r , results= FALSE}
-# setwd("~/ICMGP2022")
+setwd("E:/ICMGP2022/ICMGP2022_Coding_Chirality")
 ```
-
 
 #### Read data from a group of `.csv` files
 
@@ -54,8 +53,10 @@ str(Kmak)
 
 This `.Rdata` file contains a list of urls from the MusselWatch dataset.
 ```{r, results= FALSE}
+setwd("E:/ICMGP2022/ICMGP2022_Coding_Chirality")
 urls  <- readRDS("data/MW_urls.Rdata")
 str(urls) #vector of strings, but Rdata can be in any R object class
+urls
 ```
 
 #### Reading data from a bunch of urls online
@@ -141,7 +142,7 @@ table(DAT$Parameter)
 The `split()` function takes a data frame and makes a list of smaller data frames based on a factor. It's kind of like the opposite of rbindlist
 ```{r, results= FALSE}
 all_params <- split(DAT, DAT$Parameter)
-str(all_params) #this is a list of dataframes again, but we split by parameter instead of by site!
+#str(all_params) #this is a list of dataframes again, but we split by parameter instead of by site!
 Hg <- all_params[["Mercury"]]
 str(Hg)
 summary(Hg)
@@ -232,3 +233,6 @@ Hg %>% group_by(Matrix, Scientific_Name) %>%
             n = n()) %>% 
   arrange(desc(avgHg))
 ```
+
+
+Can you summarize the Selenium dataset too?
