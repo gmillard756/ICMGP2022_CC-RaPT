@@ -13,20 +13,22 @@ library(kableExtra)
 
 
 ```{r setup2, results= FALSE, echo=F, message=F}
-getwd()
+# getwd()
 
-dir()
+# dir()
 
 # setwd("~/ICMGP2022")
+```
 
-url <- "https://tinyurl.com/Kachemak" #this is .txt data from the MusselWatch dataset at Kachemak, AK
-Kmak <- read.delim(url)
-head(Kmak)
-str(Kmak)
 
+```{r setup3, results= FALSE, echo=F, message=F}
+setwd("~/Projects/Workshops/ICMGP2022_URaPT")
 urls  <- readRDS("data/MW_urls.Rdata")
 str(urls) #vector of strings, but Rdata can be in any R object class
+```
 
+
+```{r setup4, results= FALSE, echo=F, message=F}
 csvs <- urls[c(6,15,26)] #3 are csv
 urls <- urls[-c(6,15,26)] #25 are tabbed
 
@@ -87,8 +89,6 @@ unique(DAT$Parameter)
 
 ```{r}
 Hg_wide <- DAT[DAT$Matrix=='Mussel'] %>% pivot_wider(names_from = Parameter, values_from = Result)
-levels(DAT$Scientific_Name)
-droplevels(DAT$Scientific_Name)
 
 Hg_wide %>% ggplot(aes(y=Mercury, x=Lead, color=Scientific_Name))+
   geom_point()+
@@ -99,20 +99,12 @@ Hg_wide %>% ggplot(aes(y=Mercury, x=Lead, color=Scientific_Name))+
   theme_bw()
 ```
 
-### Exploring data?
-The base-R `r plot()` function will plot your entire data frame.
-
-```{r}
-plot(Hg_wide)
-```
-
 ### Timeseries
 
 ```{r}
 Hg_wide %>% ggplot(aes(y=Mercury, x=Fiscal_Year, group=Fiscal_Year, color = Scientific_Name))+
   geom_point()+
   geom_hline(yintercept=0.3, color='red')+
-  scale_color_v
   theme_bw()
 ```
 
