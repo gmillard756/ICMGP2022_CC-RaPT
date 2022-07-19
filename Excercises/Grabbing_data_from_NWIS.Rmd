@@ -42,12 +42,15 @@ Q <- readNWISdv(siteNumbers = sites, parameterCd='00060')
 
 data <- readWQPqw(paste0('USGS-', sites), want)
 
-whatWQPdata(siteNumber = paste0('USGS-', sites)) # seems to return GIS information
-?whatWQPdata
+sites2 <- c('0134277112', '0134277114', '0425078820', '04250804', '433031074541401', '433202074505900')
+
+siteinfo <- whatWQPdata(siteNumber = paste0('USGS-', sites2)) # seems to return GIS information
+# siteinfo
+# ?whatWQPdata
 
 
 # view(data)
-head(data)
+# head(data)
 
 ```
 
@@ -92,4 +95,68 @@ trial14 = nwis.get_record(sites=site[1], start='2011-05-16', end='2019-10-08', s
 ```{r, include=F}
 trial <- readWQPqw(siteNumbers = paste0('USGS-', sites), parameterCd=cd)
 ```
+
+### Making a map with leaflet
+Install necessary packages.  Leaflet is nice because it allows you to use GIS information from online sources without installing them directly onto your computer.  I have built my own maps using this tutorial[https://waterdata.usgs.gov/blog/basemaps/] from Jason Fisher, USGS
+```{r, warning=F}
+# install.packages("leaflet")
+# install.packages('rgdal')
+library(leaflet)
+library(rgdal)
+```
+
+create a leaflet object
+```{r}
+map <- leaflet()
+```
+
+define options and set up a function
+```{r}
+lopt <- labelOptions(noHide = TRUE,
+                    textOnly = TRUE,
+                    style = list('color'='white',
+                                 'font-size'='12px'))
+
+GetURL <- function(service, host = "basemap.nationalmap.gov") {
+  sprintf("https://%s/arcgis/services/%s/MapServer/WmsServer", host, service)
+}
+
+grp <- c("USGS Topo", 
+         "USGS Imagery Only", 
+         "USGS Imagery Topo",
+         "USGS Shaded Relief", 
+         "Hydrography")
+
+att <- paste0("<a href='https://www.usgs.gov/'>",
+              "U.S. Geological Survey</a> | ",
+              "<a href='https://www.usgs.gov/laws/policies_notices.html'>",
+              "Policies</a>")
+```
+
+Add information (tiles) to the leaflet map
+```{r}
+# map <- leaflet::addWMSTiles(map, GetURL("USGSTopo"),
+#                             group = grp[1], attribution = att, layers = "0")
+map <- leaflet::addWMSTiles(map, GetURL("USGSImageryOnly"),
+                            group = grp[2], attribution = att, layers = "0")
+# map <- leaflet::addWMSTiles(map, GetURL("USGSImageryTopo"),
+#                             group = grp[3], attribution = att, layers = "0")
+# map <- leaflet::addWMSTiles(map, GetURL("USGSShadedReliefOnly"),
+#                             group = grp[4], attribution = att, layers = "0")
+# map <- leaflet::addWMSTiles(map, GetURL("USGSHydroCached"),
+#                             group = grp[5], options = opt, layers = "0")
+
+```
+
+Pipe different map options
+```{r}
+# map %>% addCircleMarkers(lat = siteinfo$lat, lng = siteinfo$lon, label = siteinfo$ResolvedMonitoringLocationTypeName, labelOptions = lopt) %>% addScaleBar(position = 'bottomleft', scaleBarOptions(imperial = F))
+# 
+# map %>% addCircleMarkers(lat = siteinfo$lat, lng = siteinfo$lon, labelOptions = lopt) %>% addScaleBar(position = 'bottomleft', scaleBarOptions(imperial = F))
+
+map %>% addAwesomeMarkers(lat = siteinfo$lat, lng = siteinfo$lon, label = siteinfo$ResolvedMonitoringLocationTypeName, labelOptions = lopt) %>% addScaleBar(position = 'bottomleft', scaleBarOptions(imperial = F))
+# 
+# map %>% addAwesomeMarkers(lat = siteinfo$lat, lng = siteinfo$lon, label = siteinfo$ResolvedMonitoringLocationTypeName, labelOptions = lopt) %>% addScaleBar(position = 'bottomleft', scaleBarOptions(imperial = F)) %>% fitBounds(lat1 = 35, lat2 = 45, lng1 = -122, lng2 = -70)
+```
+
 
