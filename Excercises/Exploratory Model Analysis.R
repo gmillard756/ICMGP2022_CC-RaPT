@@ -4,6 +4,7 @@ library(tidyr)
 ####load, clean and match the MusselWatch data to prep for modeling
 MW <- readRDS('data/MusselWatch.Rdata')
 
+#take 5 minutes toexplore the Mussel watch dataset on your own
 str(MW)
 names(MW)
 summary(MW)
@@ -21,8 +22,10 @@ MW_pivot <- MW %>%
               names_from = Parameter, 
               values_from = Result) %>%
   filter(complete.cases(.)) %>% 
+  mutate(Hg_0.3_greater = ifelse(Mercury >= 0.3, TRUE, FALSE)) %>%
   data.frame()
 
+head(MW_pivot)
 
 #Train a random forest model
 library(ranger)
@@ -34,17 +37,42 @@ set.seed(2022)
 #  -NST site
 #  -species or matrix
 
-MW_rf <- ranger(Mercury ~ Selenium + Scientific_Name + NST_Site,
+MW_rf <- ranger(Hg_0.3_greater ~ Selenium + Scientific_Name + NST_Site,
                     data = MW_pivot,
-                    probability = FALSE,
-                    classification = FALSE)
+                    probability = TRUE,
+                    classification = TRUE)
 
-# basic use
+
+# basic DALEX
 library(DALEX)
-MW_ex <- explain(MW_rf,
-                 data = MW_pivot[1:5],
-                 y = MW_pivot$Mercury, 
-                 label = "Random Forest")
+explain_rf <- explain(model = MW_rf,  
+                      data = MW_pivot[c(2,3,5)],
+                      y = MW_pivot$Hg_0.3_greater == TRUE, 
+                      label = "Random Forest")
+# explainer objects
+explain_rf$model        # model
+explain_rf$model_info   # version of model package
+explain_rf$data         # data
+explain_rf$predict_function     # predict
+explain_rf$y_hat       # predictions
+explain_rf$residuals   # residuals
+explain_rf$label       # model label
+
+
+model_performance(explain_rf)
+
+#Exercise: use the help documentation to create a quantile regression forest on Mercury using the features Selenium, Scientific Name, and NST_Site
+MW_rf2 <- ranger(Mercury ~ Selenium + Scientific_Name + NST_Site,
+                 data = MW_pivot,
+                 quantreg = TRUE)
+
+explain_rf2 <- explain(model = MW_rf2,  
+                      data = MW_pivot[c(2,3,5)],
+                      y = MW_pivot$Mercury, 
+                      label = "Regression Forest")
+model_performance(explain_rf2)
+
+
 
 #shapley values
 head(MW_pivot)
@@ -52,7 +80,7 @@ MW_shap <- predict_parts_shap(MW_ex, new_observation = head(MW_pivot,1))
 plot(MW_shap)
 
 #multiple linear regression
-MW_lm <- lm(Mercury ~ Selenium + Scientific_Name + NST_Site + Fiscal_Year,
+MW_lm <- lm(Mercury ~ Selenium + Scientific_Name + NST_Site,
                 data = MW_pivot)
 MW_lm_ex <- explain(MW_lm,
                  data = MW_pivot[1:5],
@@ -61,3 +89,5 @@ MW_lm_ex <- explain(MW_lm,
 
 MW_shap2 <- predict_parts_shap(MW_lm_ex, new_observation = head(MW_pivot,1))
 plot(MW_shap2)
+
+
