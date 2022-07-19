@@ -1,0 +1,234 @@
+---
+title: "ICMGP 2022 MusselWatch Scrape Data"
+author: "Caitlin Eger"
+date: "7/18/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, results = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading and Managing data
+Please download data folder from github at: https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/data
+
+### The working directory
+
+##### Where is your working directory?
+
+This is the address or path that represents the location where R is currently working. You can only have one working directory active at a time
+```{r, results= FALSE}
+getwd()
+```
+
+##### What is in your working directory?
+
+This is what R can "see" in the directory. If you want to access something that's not in the directory, you'll need to give R more explicit instructions (more on this later). 
+```{r , results= FALSE}
+dir()
+```
+
+Many, many errors that occur happen because a function is trying to access an object that doesn't reference the correct directory or path. Make sure you know where you're working!
+
+### Setting the working directory manually:
+
+To set the working directory in the RStudio IDE, navigate to the "Files" tab >> click on the three dots >> navigate to your data folder >> click "Open"
+To encode the working directory: (copy the line and paste to top of your .R script file)
+```{r , results= FALSE}
+# setwd("~/ICMGP2022")
+```
+
+
+#### Read data from a group of `.csv` files
+
+#### Reading data from a url online
+This tinyurl is a shortcut to `.txt` file from the MusselWatch dataset at Kachemak, Alaska. You can view it in your browser and then read it directly into R.
+```{r, results= FALSE}
+url <- "https://tinyurl.com/Kachemak" #this is .txt data from the MusselWatch dataset at Kachemak, AK
+Kmak <- read.delim(url)
+head(Kmak)
+str(Kmak)
+```
+
+#### Reading data from a .Rdata file'
+
+This `.Rdata` file contains a list of urls from the MusselWatch dataset.
+```{r, results= FALSE}
+urls  <- readRDS("data/MW_urls.Rdata")
+str(urls) #vector of strings, but Rdata can be in any R object class
+```
+
+#### Reading data from a bunch of urls online
+
+Reading data from a list of urls is almost the same as reading in data from a bunch of `.csv` files on your local hard drive. However, in the the urls from the MusselWatch dataset, some of the `.txt` files are in `.csv` format and some are in tab-delimited format, so we want to read them in seperately. Let's make one vector containing urls with the csv-formatted data and the other vector with the tab-delimited datasets.
+```{r, results= FALSE}
+csvs <- urls[c(6,15,26)] #3 are csv
+urls <- urls[-c(6,15,26)] #25 are tabbed
+```
+
+Now we can download datasets from all the urls using `lapply()` again. (This step might take a minute).
+```{r, results= FALSE}
+DAT1 <- lapply(urls, read.delim, stringsAsFactors = F) #these are the tab-delimited files
+DAT2 <- lapply(csvs, read.delim, stringsAsFactors = F, sep = ",") #these are comma-separated
+```
+Each list has the right number of items (25 in DAT1 and 3 in DAT2)
+
+##### Check column names to see if they match up
+
+This is a nested function call that looks at all the names. Nested calls run from the inside out.
+```{r, results= FALSE}
+table(unlist(lapply(DAT1, names)))
+```
+
+##### Using multiple function operations in one step with dplyr
+
+We can also use the pipe operator for the same call, which creates code that is easier to read and understand than nested function calls.
+
+```{r, results= FALSE}
+library(dplyr) #use dplyr for the %>% pipe operator
+
+lapply(DAT1, names) %>% unlist() %>% table() 
+lapply(DAT2, names) %>% unlist %>% table 
+```
+All the data frames in `DAT1` have the same names, but the third data frame in object `DAT2` has different names. We can look at `DAT2[[3]]` to see that there are some names with `.` instead of `_` in between words. Here are a couple other examples of how the pipe operator works.
+
+```{r, results= FALSE}
+head(DAT2[[3]])
+DAT2[[3]] %>% head
+```
+
+Because the columns are all in the same order, in this case we can just take the names for one of the data frames 
+```{r, results= FALSE}
+names(DAT2[[3]]) <- names(DAT2[[2]])
+lapply(DAT2, names) %>% unlist %>% table #now all of them are the same
+```
+
+
+We can use the data.table package to zip all the names from the list of names into a single data frame. Now we can stack all the dataframes from the MusselWatch urls into one big dataset and check if DAT1 and DAT2 have the same names:
+```{r, results= FALSE}
+library(data.table)
+DAT1 <- rbindlist(DAT1)
+DAT2 <- rbindlist(DAT2, fill = T)
+names(DAT2) == names(DAT1) 
+```
+
+The first column still has different names, `names(DAT2)[[1]]` and `names(DAT1)[[1]]` don't match each other. All names need to be the same if we want to stack them into one big datset
+```{r, results= FALSE}
+names(DAT2)[[1]] <- names(DAT1)[[1]]
+```
+
+Finally we rbind! (row bind two data frames `DAT1` and `DAT2` together)
+```{r, results= FALSE}
+DAT <- rbind(DAT1, DAT2, fill = T)
+str(DAT) #77786 observations of fish and mussel tissue
+summary(DAT) #not very useful, because all the factors are in character class
+```
+
+Now we've just created a dataset with 77,786 observations of trace metals in fish and mussel tissue from across the coastal United States! Great work!
+
+#### Quick summary using `summary()` and `table()`
+
+```{r, results= FALSE}
+DAT$study <- as.factor(DAT$study)
+DAT <- DAT %>% mutate_if(is.character, as.factor) #conditional mutate
+summary(DAT) #better!
+table(DAT$Parameter) 
+```
+
+## Subsetting datasets
+
+##### Splitting a dataset by factor
+The `split()` function takes a data frame and makes a list of smaller data frames based on a factor. It's kind of like the opposite of rbindlist
+```{r, results= FALSE}
+all_params <- split(DAT, DAT$Parameter)
+str(all_params) #this is a list of dataframes again, but we split by parameter instead of by site!
+Hg <- all_params[["Mercury"]]
+str(Hg)
+summary(Hg)
+
+#now we have a nice big mercury dataset!
+table(Hg$Matrix) %>% sort #mostly mussels and oysters
+```
+
+##### Selecting a whole column
+
+```{r, results= FALSE}
+names(Hg)
+Hg$Matrix
+Hg["Matrix"]
+Hg[[8]]
+Hg[,8]
+
+```
+
+##### Selecting a whole row
+
+```{r, results= FALSE}
+Hg[4,]
+```
+
+##### Selecting a single observation
+
+```{r, results= FALSE}
+Hg$Matrix[4]
+Hg$Matrix[[4]]
+Hg[4,8]
+```
+
+##### Selecting columns with dplyr
+
+```{r, results= FALSE}
+Hg %>% dplyr::select(Matrix)
+```
+
+##### Selecting using a selector vector
+
+A selector vector is an index of rows that meet a logical criteria in the form `k <- which(logical == T)`. I always use the variable `k` to denote a selector vector, so that I know it can always be overwritten after being used. You can name your selector vector something more informative if you know you're going to be using it throughout the code.
+```{r, results= FALSE}
+k <- which(Hg$Matrix == "Oyster")
+k
+Hg[k,]
+Hg$Scientific_Name[k]
+
+```
+
+##### Filtering data with dplyr 
+
+We can also filter all of the rows in the `Hg` dataset to select only samples from mussel species, not other specimens.
+```{r, results= FALSE}
+Mussels <- Hg %>% dplyr::filter(Matrix == "Mussel")
+head(Mussels)
+```
+
+## Summarizing datasets
+
+Remember earlier when we summarized the Mussel Watch dataset `DAT` to get a sense what was in those 77K observations? We can do the same again with the mercury subset, and do more complex summaries using dplyr.
+```{r, results= FALSE}
+summary(Hg) #by column, not by row
+```
+
+##### Summarizing by category
+
+There are 6 core dplyr functions: 
+  - select: selects, renames and orders columns
+  - filter: filters rows by a logical criteria
+  - group_by: creates groups by factor 
+  - arrange: orders rows in ascending or descending order by one or more columns 
+  - summarize: performs a calculation groupwise across groups 
+  - mutate: performs a calculation to overwrite or create a new column  
+
+We can combine them using the pipe operator `%>%` to create complex dataset summaries. Let's try some:
+```{r, results= FALSE}
+Hg %>% group_by(Matrix) %>% summarise(avgHg = mean(Result)) %>% arrange(desc(avgHg))
+Hg %>% group_by(Matrix) %>% 
+  summarise(avgHg = mean(Result),
+            stdevHg = sd(Result),
+            n = n()) %>% 
+  arrange(desc(avgHg))
+
+Hg %>% group_by(Matrix, Scientific_Name) %>% 
+  summarise(avgHg = mean(Result),
+            stdevHg = sd(Result),
+            n = n()) %>% 
+  arrange(desc(avgHg))
+```
