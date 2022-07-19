@@ -71,9 +71,7 @@ The DAT data frame contains a lot of data in a long format.  I have found ggplot
 ### Boxplot
 
 ```{r}
-
- 
-DAT[DAT$Parameter=='Mercury',] %>% group_by(General_Location, Matrix) %>% summarize(n=n(), mean=mean(Result), sd=sd(Result)) %>% kable() %>% kable_styling(bootstrap_options = c('striped', 'hover'), full_width = F)
+# DAT[DAT$Parameter=='Mercury',] %>% group_by(General_Location, Matrix) %>% summarize(n=n(), mean=mean(Result), sd=sd(Result)) %>% kable() %>% kable_styling(bootstrap_options = c('striped', 'hover'), full_width = F)
 
 
 DAT[DAT$Parameter=='Mercury',] %>% ggplot(aes(x= Matrix, y=Result))+
