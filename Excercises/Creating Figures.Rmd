@@ -1,0 +1,174 @@
+---
+title: "Creating Figures"
+author: "Geoffrey Millard"
+date: "7/18/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
+```
+
+
+```{r setup2, results= FALSE, echo=F, message=F}
+getwd()
+
+dir()
+
+# setwd("~/ICMGP2022")
+
+url <- "https://tinyurl.com/Kachemak" #this is .txt data from the MusselWatch dataset at Kachemak, AK
+Kmak <- read.delim(url)
+head(Kmak)
+str(Kmak)
+
+urls  <- readRDS("data/MW_urls.Rdata")
+str(urls) #vector of strings, but Rdata can be in any R object class
+
+csvs <- urls[c(6,15,26)] #3 are csv
+urls <- urls[-c(6,15,26)] #25 are tabbed
+
+DAT1 <- lapply(urls, read.delim, stringsAsFactors = F) #these are the tab-delimited files
+DAT2 <- lapply(csvs, read.delim, stringsAsFactors = F, sep = ",") #these are comma-separated
+
+table(unlist(lapply(DAT1, names)))
+
+library(dplyr) #use dplyr for the %>% pipe operator
+
+lapply(DAT1, names) %>% unlist() %>% table() 
+lapply(DAT2, names) %>% unlist %>% table 
+
+head(DAT2[[3]])
+DAT2[[3]] %>% head
+
+names(DAT2[[3]]) <- names(DAT2[[2]])
+lapply(DAT2, names) %>% unlist %>% table #now all of them are the same
+
+library(data.table)
+DAT1 <- rbindlist(DAT1)
+DAT2 <- rbindlist(DAT2, fill = T)
+names(DAT2) == names(DAT1) 
+
+names(DAT2)[[1]] <- names(DAT1)[[1]]
+
+DAT <- rbind(DAT1, DAT2, fill = T)
+str(DAT) #77786 observations of fish and mussel tissue
+summary(DAT) #not very useful, because all the factors are in character class
+```
+
+
+## Let's get started!
+Data: We are going to use the DAT data file from ln 122 in 'Data Scrape in R.Rmd'
+package: ggplot2 which is part of the tidyverse package
+
+The DAT data frame contains a lot of data in a long format.  I have found ggplot typically works best with long format data, however many base-R functions (eg. statistics, base plots) work better with wide format data
+
+
+### Boxplot
+
+```{r}
+
+ 
+DAT[DAT$Parameter=='Mercury',] %>% group_by(General_Location, Matrix) %>% summarize(n=n(), mean=mean(Result), sd=sd(Result)) %>% kable() %>% kable_styling(bootstrap_options = c('striped', 'hover'), full_width = F)
+
+
+DAT[DAT$Parameter=='Mercury',] %>% ggplot(aes(x= Matrix, y=Result))+
+  geom_boxplot()+
+  theme_bw()
+
+names(DAT)
+unique(DAT$Matrix)
+unique(DAT$Parameter)
+```
+
+### Scatterplot
+
+```{r}
+Hg_wide <- DAT[DAT$Matrix=='Mussel'] %>% pivot_wider(names_from = Parameter, values_from = Result)
+levels(DAT$Scientific_Name)
+droplevels(DAT$Scientific_Name)
+
+Hg_wide %>% ggplot(aes(y=Mercury, x=Lead, color=Scientific_Name))+
+  geom_point()+
+  stat_smooth(method = 'glm')+
+  xlim(0, 30)+
+  ylim(0, 0.60)+
+  scale_color_manual(values = viridisLite::viridis(n=3, end=0.8, direction = -1))+
+  theme_bw()
+```
+
+### Exploring data?
+The base-R `r plot()` function will plot your entire data frame.
+
+```{r}
+plot(Hg_wide)
+```
+
+### Timeseries
+
+```{r}
+Hg_wide %>% ggplot(aes(y=Mercury, x=Fiscal_Year, group=Fiscal_Year, color = Scientific_Name))+
+  geom_point()+
+  geom_hline(yintercept=0.3, color='red')+
+  scale_color_v
+  theme_bw()
+```
+
+### Timeseries in boxplot form
+
+```{r}
+Hg_wide %>% ggplot(aes(y=Mercury, x=Fiscal_Year, group=Fiscal_Year))+
+  geom_boxplot()+
+  facet_wrap(~Scientific_Name, nrow = 3)+
+  theme_bw()
+```
+
+### Make your own Theme!!??!??
+
+This can be really helpful when you are formatting figures for publication, presentations, etc.  I modified this theme from {Benjamin Louis}[https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/]
+
+```{r ggplot theme, echo=F, warning=F}
+theme_ben <- function(base_size = 14) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # L'ensemble de la figure
+      plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # Zone où se situe le graphique
+      # panel.grid.minor = element_blank(),
+      # panel.border = element_blank(),
+      # Les axes
+      axis.title = element_text(size = rel(0.85), face = "bold"),
+      axis.text = element_text(size = rel(0.70), face = "bold"),
+      axis.line = element_line(color = "black"),
+      # La légende
+      legend.title = element_text(size = rel(0.75), face = "bold"),
+      legend.text = element_text(size = rel(0.50), face = "bold"),
+      legend.key = element_rect(fill = "transparent", colour = NA),
+      legend.key.size = unit(1.5, "lines"),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les étiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "transparent", color = NA),
+      strip.placement = 'outside',
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "Black", margin = margin(5,0,5,0))
+    )
+}
+
+theme_set(theme_ben())
+
+addline_format <- function(x,...){
+    gsub('\\s','\n',x)
+}
+```
+
+Check out how it changed this figure:
+
+```{r}
+Hg_wide %>% ggplot(aes(y=Mercury, x=Fiscal_Year, group=Fiscal_Year))+
+  geom_boxplot()+
+  facet_wrap(~Scientific_Name, nrow = 3)
+```
+
+##Exercise
+In the time we've got left, make some new figures!  Maybe look at lead, or arsenic.  Look at Oysters instead of Mussels.  This is a big dataset and we have hardly even scratched the surface!!
