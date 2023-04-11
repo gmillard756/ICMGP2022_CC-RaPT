@@ -38,10 +38,10 @@ It is recommended all attendees complete the pre-workshop activities (*For peopl
 This Repository is for files used in the Coding Chirality workshop as part of the International Conference on Mercury as a Global Pollutant
 
 ## Workshop code
-1) [Scraping datasets from the web using an API (either language)](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Grabbing_data_from_NWIS.html) 
-2) [Importing and cleaning datasets (R)]("https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Data scrape and model.R")
-3) [Creating plots and maps](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Creating-figures.html)
-4) [An exploratory data analysis (Python)]("https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Exploratory Model Analysis.R")
+1) [Scraping datasets from the web using an API (either language)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Grabbing_data_from_NWIS.html) 
+2) [Importing and cleaning datasets (R)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Data scrape and model.R)
+3) [Creating plots and maps](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Creating-figures.html)
+4) [An exploratory data analysis (Python)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Exploratory Model Analysis.R")
 
 ## Additional Resources
 ### R
