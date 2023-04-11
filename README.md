@@ -1,6 +1,6 @@
 2022-02-22, a real actual twosday
 
-Last updated: July 15th, 2022
+Last updated: April 11th, 2023
 # ICMGP2022 Coding Chirality: Using R and Python Together
 **No prior coding experience is necessary**
 
@@ -36,6 +36,12 @@ If you can download and run [Pre-workshop_check.Rmd](https://github.com/gmillard
 It is recommended all attendees complete the pre-workshop activities (*For people with little/no coding experience, there is now an R based [pre-workshop coding exercise](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Intro_to_coding_with_R.html) (30 min) to get familiar with basic principles*). Attendees are encouraged to ask questions during the session.
 
 This Repository is for files used in the Coding Chirality workshop as part of the International Conference on Mercury as a Global Pollutant
+
+## Workshop code
+1) [Scraping datasets from the web using an API (either language)](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Grabbing_data_from_NWIS.html) 
+2) [Importing and cleaning datasets (R)](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Data scrape and model.R)
+3) [Creating plots and maps](https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Creating-figures.html)
+4) [An exploratory data analysis (Python)]((https://github.com/gmillard756/ICMGP2022_Coding_Chirality/tree/main/Excercises/Exploratory Model Analysis.R)
 
 ## Additional Resources
 ### R
