@@ -39,9 +39,9 @@ This Repository is for files used in the Coding Chirality workshop as part of th
 
 ## Workshop code
 
-1) [Scraping datasets from the web using an API (either language)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Grabbing_data_from_NWIS.html)\ 
-2) [Importing and cleaning datasets (R)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Data-scrape-and-model-rmarkdown.html)\
-3) [Creating plots and maps](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Creating-figures.html)\
+1) [Scraping datasets from the web using an API (either language)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Grabbing_data_from_NWIS.html)
+2) [Importing and cleaning datasets (R)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Data-scrape-and-model-rmarkdown.html)
+3) [Creating plots and maps](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Creating-figures.html)
 4) [An exploratory data analysis (Python)](https://gmillard756.github.io/ICMGP2022_Coding_Chirality/Excercises/Exploratory Model Analysis.R")
 
 ## Additional Resources
